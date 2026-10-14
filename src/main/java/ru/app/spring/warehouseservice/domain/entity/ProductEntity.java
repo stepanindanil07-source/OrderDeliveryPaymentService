@@ -1,8 +1,6 @@
 package ru.app.spring.warehouseservice.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
 import lombok.*;
 import ru.app.spring.warehouseservice.domain.enums.ProductStatus;
 
@@ -28,8 +26,6 @@ public class ProductEntity {
     @Column(name = "sku", unique = true)
     private String sku;
 
-    //@DecimalMin(value = "0", inclusive = false)
-    //@Digits(integer = 0, fraction = 2)
     @Column(name = "price")
     private BigDecimal price;
 
