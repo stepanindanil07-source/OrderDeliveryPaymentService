@@ -30,6 +30,7 @@ public class WarehouseProcessor {
     public CreateResponseProductDto createProduct(CreateRequestProductDto request) {
         log.info("Creating product in processor, request: {}", request);
         var entity = productMapper.toEntity(request);
+        entity.setSku(request.sku().toUpperCase());
         entity.setStatus(ProductStatus.DEACTIVATED);
         if (productEntityRepository.findBySku(entity.getSku())!=null) {
             throw new DuplicateSkuException("Duplication of SKU with another product, SKU = " + entity.getSku());
