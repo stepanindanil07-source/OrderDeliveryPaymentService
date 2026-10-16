@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.app.spring.warehouseservice.api.dto.CreateRequestProductDto;
-import ru.app.spring.warehouseservice.api.dto.CreateResponseProductDto;
-import ru.app.spring.warehouseservice.api.dto.ProductSearchFilter;
+import ru.app.spring.warehouseservice.api.dto.productDto.RequestProductDto;
+import ru.app.spring.warehouseservice.api.dto.productDto.ResponseProductDto;
+import ru.app.spring.warehouseservice.api.dto.productDto.ProductSearchFilter;
 import ru.app.spring.warehouseservice.domain.db.repository.ProductEntityRepository;
 import ru.app.spring.warehouseservice.domain.exceptionWork.customException.DuplicateSkuException;
 import ru.app.spring.warehouseservice.domain.entity.ProductEntity;
@@ -21,13 +21,13 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class WarehouseProcessor {
+public class ProductProcessor {
 
     private final ProductEntityRepository productEntityRepository;
     private final ProductMapper productMapper;
 
     @Transactional
-    public CreateResponseProductDto createProduct(CreateRequestProductDto request) {
+    public ResponseProductDto createProduct(RequestProductDto request) {
         log.info("Creating product in processor, request: {}", request);
         var entity = productMapper.toEntity(request);
         entity.setSku(request.sku().toUpperCase());
@@ -38,14 +38,14 @@ public class WarehouseProcessor {
         return productMapper.toDto(productEntityRepository.save(entity));
     }
 
-    public CreateResponseProductDto getProductById(Long id) {
+    public ResponseProductDto getProductById(Long id) {
         log.info("Getting product in processor, id: {}", id);
         var entity = getEntityFromDb(id);
 
         return productMapper.toDto(entity);
     }
 
-    public List<CreateResponseProductDto> getAllByFilter(ProductSearchFilter filter) {
+    public List<ResponseProductDto> getAllByFilter(ProductSearchFilter filter) {
         log.info("Getting all products in processor");
 
         int pageSize = filter.pageSize() != null
@@ -71,7 +71,7 @@ public class WarehouseProcessor {
     }
 
     @Transactional
-    public CreateResponseProductDto activateProduct(Long id) {
+    public ResponseProductDto activateProduct(Long id) {
         log.info("Activating product in processor, id: {}", id);
         var entity = getEntityFromDb(id);
         if (entity.getStatus().equals(ProductStatus.ACTIVE)) {
@@ -82,7 +82,7 @@ public class WarehouseProcessor {
     }
 
     @Transactional
-    public CreateResponseProductDto deactivateProduct(Long id) {
+    public ResponseProductDto deactivateProduct(Long id) {
         log.info("Deactivating product in processor, id: {}", id);
         var entity = getEntityFromDb(id);
         if (entity.getStatus().equals(ProductStatus.DEACTIVATED)) {
@@ -93,7 +93,7 @@ public class WarehouseProcessor {
     }
 
     @Transactional
-    public CreateResponseProductDto updateName(Long id, String name) {
+    public ResponseProductDto updateName(Long id, String name) {
         log.info("Updating product`s name in processor, id: {}", id);
         var entity = getEntityFromDb(id);
         if(entity.getName().equals(name)){
@@ -104,7 +104,7 @@ public class WarehouseProcessor {
     }
 
     @Transactional
-    public CreateResponseProductDto updatePrice(Long id, BigDecimal price) {
+    public ResponseProductDto updatePrice(Long id, BigDecimal price) {
         log.info("Updating product`s price in processor, id: {}", id);
         var entity = getEntityFromDb(id);
         if (entity.getPrice().equals(price)){

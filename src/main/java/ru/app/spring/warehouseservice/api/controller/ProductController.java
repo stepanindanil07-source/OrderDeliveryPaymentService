@@ -7,43 +7,43 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.app.spring.warehouseservice.api.dto.CreateRequestProductDto;
-import ru.app.spring.warehouseservice.api.dto.CreateResponseProductDto;
-import ru.app.spring.warehouseservice.api.dto.ProductSearchFilter;
+import ru.app.spring.warehouseservice.api.dto.productDto.RequestProductDto;
+import ru.app.spring.warehouseservice.api.dto.productDto.ResponseProductDto;
+import ru.app.spring.warehouseservice.api.dto.productDto.ProductSearchFilter;
 import ru.app.spring.warehouseservice.domain.enums.ProductStatus;
-import ru.app.spring.warehouseservice.domain.processor.WarehouseProcessor;
+import ru.app.spring.warehouseservice.domain.processor.ProductProcessor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/warehouse")
+@RequestMapping("/warehouse/products")
 @Slf4j
 @RequiredArgsConstructor
-public class WarehouseController {
+public class ProductController {
 
-    private final WarehouseProcessor warehouseProcessor;
+    private final ProductProcessor warehouseProcessor;
 
-    @PostMapping("/products")
-    public ResponseEntity<CreateResponseProductDto> create(
-            @RequestBody CreateRequestProductDto request
+    @PostMapping()
+    public ResponseEntity<ResponseProductDto> create(
+            @RequestBody RequestProductDto request
     ) {
-        log.info("called create api method with request {}", request);
+        log.info("called create product endpoint with request {}", request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(warehouseProcessor.createProduct(request));
     }
 
-    @GetMapping("/products/{id}")
-    public ResponseEntity<CreateResponseProductDto> get(
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseProductDto> get(
             @PathVariable Long id
     ) {
-        log.info("called get api method with id {}", id);
+        log.info("called get product endpoint with id {}", id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(warehouseProcessor.getProductById(id));
     }
 
-    @GetMapping("/products")
-    public ResponseEntity<List<CreateResponseProductDto>> getAllByFilter(
+    @GetMapping()
+    public ResponseEntity<List<ResponseProductDto>> getAllByFilter(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "status", required = false) ProductStatus status,
             @RequestParam(name = "pageSize", required = false) int pageSize,
@@ -60,42 +60,42 @@ public class WarehouseController {
                 .body(warehouseProcessor.getAllByFilter(filter));
     }
 
-    @PatchMapping("/products/{id}/activate")
-    public ResponseEntity<CreateResponseProductDto> activate(
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<ResponseProductDto> activate(
             @PathVariable Long id
     ){
-        log.info("called activate api method with id {}", id);
+        log.info("called activate product endpoint with id {}", id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(warehouseProcessor.activateProduct(id));
     }
 
-    @PatchMapping("/products/{id}/deactivate")
-    public ResponseEntity<CreateResponseProductDto> deactivate(
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<ResponseProductDto> deactivate(
             @PathVariable Long id
     ){
-        log.info("called deactivate api method with id {}", id);
+        log.info("called deactivate product endpoint with id {}", id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(warehouseProcessor.deactivateProduct(id));
     }
 
-    @PatchMapping("/products/{id}/name")
-    public ResponseEntity<CreateResponseProductDto> updateName(
+    @PatchMapping("/{id}/name")
+    public ResponseEntity<ResponseProductDto> updateName(
             @PathVariable Long id,
             @RequestParam String name
     ){
-        log.info("called update api method with id {}", id);
+        log.info("called update product endpoint with id {}", id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(warehouseProcessor.updateName(id,name));
     }
 
-    @PatchMapping("/products/{id}/price")
-    public ResponseEntity<CreateResponseProductDto> updatePrice(
+    @PatchMapping("/{id}/price")
+    public ResponseEntity<ResponseProductDto> updatePrice(
             @PathVariable Long id,
             @RequestParam
             @DecimalMin(value = "0",inclusive = false)
             @Digits(integer = 11, fraction = 2) BigDecimal price
     ){
-        log.info("called update api method with id {}", id);
+        log.info("called update product endpoint with id {}", id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(warehouseProcessor.updatePrice(id,price));
     }

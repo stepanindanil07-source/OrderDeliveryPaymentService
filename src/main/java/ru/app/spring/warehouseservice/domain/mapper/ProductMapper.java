@@ -1,14 +1,14 @@
 package ru.app.spring.warehouseservice.domain.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.app.spring.warehouseservice.api.dto.CreateRequestProductDto;
-import ru.app.spring.warehouseservice.api.dto.CreateResponseProductDto;
+import ru.app.spring.warehouseservice.api.dto.productDto.RequestProductDto;
+import ru.app.spring.warehouseservice.api.dto.productDto.ResponseProductDto;
 import ru.app.spring.warehouseservice.domain.entity.ProductEntity;
 
 @Component
 public class ProductMapper {
 
-    public ProductEntity toEntity(CreateRequestProductDto requestProductDto) {
+    public ProductEntity toEntity(RequestProductDto requestProductDto) {
         var productEntity = ProductEntity.builder()
                 .name(requestProductDto.name())
                 .price(requestProductDto.price())
@@ -17,8 +17,8 @@ public class ProductMapper {
         return productEntity;
     }
 
-    public CreateResponseProductDto toDto(ProductEntity productEntity) {
-        var responseProductDto = new CreateResponseProductDto(
+    public ResponseProductDto toDto(ProductEntity productEntity) {
+        var responseProductDto = new ResponseProductDto(
                 productEntity.getId(),
                 productEntity.getName(),
                 productEntity.getSku(),

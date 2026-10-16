@@ -1,13 +1,12 @@
-package ru.app.spring.warehouseservice.api.dto;
+package ru.app.spring.warehouseservice.api.dto.productDto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
-import ru.app.spring.warehouseservice.domain.enums.ProductStatus;
 
 import java.math.BigDecimal;
 
-public record CreateRequestProductDto(
+public record RequestProductDto(
         @NotNull
         String  name,
         @NotNull

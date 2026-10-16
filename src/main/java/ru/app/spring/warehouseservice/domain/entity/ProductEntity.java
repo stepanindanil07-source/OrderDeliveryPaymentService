@@ -1,13 +1,14 @@
 package ru.app.spring.warehouseservice.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ru.app.spring.warehouseservice.domain.enums.ProductStatus;
 
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "products_micro_service")
+@Table(name = "warehouse_products")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,5 +33,12 @@ public class ProductEntity {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
+
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quantity_stock_id")
+    private StockEntity quantityStock;
+
+
 
 }
