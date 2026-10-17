@@ -1,17 +1,21 @@
 package ru.app.spring.warehouseservice.api.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.app.spring.warehouseservice.api.dto.productDto.RequestProductDto;
 import ru.app.spring.warehouseservice.api.dto.productDto.ResponseProductDto;
 import ru.app.spring.warehouseservice.api.dto.productDto.ProductSearchFilter;
 import ru.app.spring.warehouseservice.domain.enums.ProductStatus;
-import ru.app.spring.warehouseservice.domain.processor.ProductProcessor;
+import ru.app.spring.warehouseservice.domain.service.ProductService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,13 +24,14 @@ import java.util.List;
 @RequestMapping("/warehouse/products")
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 public class ProductController {
 
-    private final ProductProcessor warehouseProcessor;
+    private final ProductService warehouseProcessor;
 
     @PostMapping()
     public ResponseEntity<ResponseProductDto> create(
-            @RequestBody RequestProductDto request
+            @Valid @RequestBody RequestProductDto request
     ) {
         log.info("called create product endpoint with request {}", request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -46,8 +51,8 @@ public class ProductController {
     public ResponseEntity<List<ResponseProductDto>> getAllByFilter(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "status", required = false) ProductStatus status,
-            @RequestParam(name = "pageSize", required = false) int pageSize,
-            @RequestParam(name = "pageNumber",required = false) int pageCount
+            @Positive @RequestParam(name = "pageSize", required = false) Integer pageSize,
+            @Positive @Max(25) @RequestParam(name = "pageNumber",required = false) Integer pageCount
     ) {
         log.info("called get all api method");
         var filter = new ProductSearchFilter(

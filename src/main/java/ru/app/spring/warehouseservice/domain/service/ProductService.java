@@ -1,17 +1,20 @@
-package ru.app.spring.warehouseservice.domain.processor;
+package ru.app.spring.warehouseservice.domain.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.app.spring.warehouseservice.api.dto.productDto.RequestProductDto;
 import ru.app.spring.warehouseservice.api.dto.productDto.ResponseProductDto;
 import ru.app.spring.warehouseservice.api.dto.productDto.ProductSearchFilter;
 import ru.app.spring.warehouseservice.domain.db.repository.ProductEntityRepository;
+import ru.app.spring.warehouseservice.domain.db.repository.StockEntityRepository;
+import ru.app.spring.warehouseservice.domain.db.entity.StockEntity;
 import ru.app.spring.warehouseservice.domain.exceptionWork.customException.DuplicateSkuException;
-import ru.app.spring.warehouseservice.domain.entity.ProductEntity;
+import ru.app.spring.warehouseservice.domain.db.entity.ProductEntity;
 import ru.app.spring.warehouseservice.domain.enums.ProductStatus;
 import ru.app.spring.warehouseservice.domain.mapper.ProductMapper;
 
@@ -21,21 +24,33 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ProductProcessor {
+public class ProductService {
 
     private final ProductEntityRepository productEntityRepository;
     private final ProductMapper productMapper;
+    private final StockEntityRepository stockEntityRepository;
 
     @Transactional
     public ResponseProductDto createProduct(RequestProductDto request) {
         log.info("Creating product in processor, request: {}", request);
+
         var entity = productMapper.toEntity(request);
         entity.setSku(request.sku().toUpperCase());
         entity.setStatus(ProductStatus.DEACTIVATED);
+
         if (productEntityRepository.findBySku(entity.getSku())!=null) {
             throw new DuplicateSkuException("Duplication of SKU with another product, SKU = " + entity.getSku());
         }
-        return productMapper.toDto(productEntityRepository.save(entity));
+
+        var savedEntity = productEntityRepository.save(entity);
+
+        StockEntity stockEntity = new StockEntity();
+        stockEntity.setProduct(savedEntity);
+        stockEntity.setQuantity(0);
+
+        stockEntityRepository.save(stockEntity);
+
+        return productMapper.toDto(savedEntity);
     }
 
     public ResponseProductDto getProductById(Long id) {
@@ -107,7 +122,7 @@ public class ProductProcessor {
     public ResponseProductDto updatePrice(Long id, BigDecimal price) {
         log.info("Updating product`s price in processor, id: {}", id);
         var entity = getEntityFromDb(id);
-        if (entity.getPrice().equals(price)){
+        if (entity.getPrice().compareTo(price)==0){
             throw new IllegalStateException("Product price is already in use.");
         }
         entity.setPrice(price);

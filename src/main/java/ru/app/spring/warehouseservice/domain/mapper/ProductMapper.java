@@ -3,7 +3,7 @@ package ru.app.spring.warehouseservice.domain.mapper;
 import org.springframework.stereotype.Component;
 import ru.app.spring.warehouseservice.api.dto.productDto.RequestProductDto;
 import ru.app.spring.warehouseservice.api.dto.productDto.ResponseProductDto;
-import ru.app.spring.warehouseservice.domain.entity.ProductEntity;
+import ru.app.spring.warehouseservice.domain.db.entity.ProductEntity;
 
 @Component
 public class ProductMapper {

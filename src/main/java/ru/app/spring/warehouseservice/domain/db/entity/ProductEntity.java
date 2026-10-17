@@ -1,7 +1,6 @@
-package ru.app.spring.warehouseservice.domain.entity;
+package ru.app.spring.warehouseservice.domain.db.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ru.app.spring.warehouseservice.domain.enums.ProductStatus;
 
@@ -34,11 +33,8 @@ public class ProductEntity {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "quantity_stock_id")
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
     private StockEntity quantityStock;
-
 
 
 }

@@ -1,4 +1,4 @@
-package ru.app.spring.warehouseservice.domain.entity;
+package ru.app.spring.warehouseservice.domain.db.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -16,7 +16,6 @@ import lombok.Setter;
 public class StockEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
     private Long id;
 
@@ -24,6 +23,8 @@ public class StockEntity {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @OneToOne(mappedBy = "quantityStock")
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_id")
     private ProductEntity product;
 }
